@@ -1,0 +1,25 @@
+@startuml
+hide footbox
+autonumber
+
+box "FRONTEND"
+participant ListDeliveryScreen
+end box
+
+box "BACKEND"
+participant API
+participant database
+end box
+
+
+ListDeliveryScreen -> API: GET /deliveries/{userID}\n{ "token": "hash_token" }
+API -> API: validar_token
+
+group if (token valid)
+API -> database: consultar data
+database -> ListDeliveryScreen: code:200\n{\n\tmessage:"operacion exitosa", \n\tdata:[{...},{...}],\n\terrors:{...}\n}
+else
+  API -> ListDeliveryScreen: code:400\n{\n\tmessage:"token invalido", \n\tdata:{...},\n\terrors:{...}\n}
+end
+
+@enduml

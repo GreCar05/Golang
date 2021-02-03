@@ -1,0 +1,32 @@
+@startuml
+hide footbox
+autonumber
+
+actor client
+
+box "FRONTEND"
+participant ListDeliveryScreen
+participant RateScreen
+end box
+
+box "BACKEND"
+participant API
+participant database
+end box
+
+
+client -> ListDeliveryScreen: selecciona \ncalificar un envio
+ListDeliveryScreen -> RateScreen: se muestra la \npantalla de calificacion
+client -> RateScreen: escoge una calificacion
+RateScreen-> API: POST /rate/{id_delivery}\n { \n\t"token": "hash_token": \n\trate: rateValue \n}
+API->API: validar_token
+
+group if (token valid)
+API -> database: Actualiza el rate del envio
+API -> ListDeliveryScreen: code:200\n{\n\tmessage:"operacion exitosa", \n\tdata:{...},\n\terrors:{...}\n}
+
+else
+  API -> ListDeliveryScreen: code:400\n{\n\tmessage:"error", \n\tdata:{...},\n\terrors:{...}\n}
+end
+
+@enduml

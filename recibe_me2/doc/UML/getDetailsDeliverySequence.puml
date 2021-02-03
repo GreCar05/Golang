@@ -1,0 +1,29 @@
+@startuml
+hide footbox
+autonumber
+
+actor client
+
+box "FRONTEND"
+participant ListDeliveryScreen
+participant DetailsDeliveryScreen
+end box
+
+box "BACKEND"
+participant API
+participant database
+end box
+
+client -> ListDeliveryScreen: selecciona \nver un envio
+ListDeliveryScreen -> DetailsDeliveryScreen: se muestra la \npantalla de detalles
+DetailsDeliveryScreen-> API: GET /deliveries/{id_delivery}\n{ \n\t"token": "hash_token" \n}
+API->API: validar_token
+
+group if (token valid)
+API -> database: consultar data
+database -> ListDeliveryScreen: DetailsDelivery\ncode:200\n{\n\tmessage:"operacion exitosa", \n\tdata:{...},\n\terrors:{...}\n}
+else
+  API -> ListDeliveryScreen: code:400\n{\n\tmessage:"Token invalido info", \n\tdata:{...},\n\terrors:{...}\n}
+end
+
+@enduml
